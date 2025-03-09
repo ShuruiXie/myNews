@@ -18,6 +18,24 @@
 
 ## 项目结构
 src/main/java/com/example/mynews/
+###controller
+####NewsController
+####UserController
+###service
+####NewsService
+####UserService
+###mapper
+####NewsMapper
+####UserMapper
+###pojo
+####dto
+####vo
+####entity
+###config
+####RedisConfig
+###exception
+###util
+###response
 ├── controller // 控制器层,处理HTTP请求
 │ ├── NewsController // 新闻相关接口
 │ └── UserController // 用户相关接口
