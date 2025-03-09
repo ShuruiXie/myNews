@@ -1,0 +1,51 @@
+
+
+
+
+### 用户注册测试 - 正常情况
+POST localhost:8080/api/users/reg
+Content-Type: application/json
+
+{
+  "account":123456,
+  "password":"123456"
+}
+
+
+### 用户注册测试 - 账号格式错误
+POST localhost:8080/api/users/reg
+Content-Type: application/json
+
+{
+  "account": "abc",
+  "password": "123456"
+}
+
+
+### 用户登录测试 - 正常情况
+POST localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "account": "123456",
+  "password": "123456"
+}
+
+### 用户登录测试 - 密码错误
+POST localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "account": "123456",
+  "password": "wrong_password"
+}
+
+### 更新用户信息测试
+POST localhost:8080/api/users/updateUser
+Content-Type: application/json
+
+{
+  "account": 123456,
+  "username": "新用户名",
+  "password": "new_password"
+}
