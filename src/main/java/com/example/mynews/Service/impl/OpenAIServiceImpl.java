@@ -18,12 +18,16 @@ import java.util.Map;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import com.example.mynews.exception.ValidationException;
 
+/**
+ * OpenAI服务实现类
+ * 负责与OpenAI API进行交互，处理AI文本摘要功能
+ */
 @Service
 @Slf4j
 public class OpenAIServiceImpl implements AIService {
 
     @Autowired
-    private OpenAIConfig config;
+    public OpenAIConfig config;
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
@@ -36,6 +40,13 @@ public class OpenAIServiceImpl implements AIService {
         this.objectMapper = new ObjectMapper();
     }
 
+    /**
+     * 对文本内容进行摘要
+     * @param content 需要摘要的文本内容
+     * @return 摘要结果
+     * @throws ValidationException 当content为空时抛出
+     * @throws BusinessException 当API调用失败时抛出
+     */
     @Override
     public String summarizeContent(String content) {
         if (content == null || content.trim().isEmpty()) {
@@ -57,6 +68,11 @@ public class OpenAIServiceImpl implements AIService {
         }
     }
 
+    /**
+     * 构建OpenAI API请求体
+     * @param content 用户输入的文本内容
+     * @return 符合OpenAI API格式的请求体
+     */
     private Map<String, Object> buildRequestBody(String content) {
         List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of(
@@ -74,6 +90,12 @@ public class OpenAIServiceImpl implements AIService {
         );
     }
 
+    /**
+     * 发送HTTP请求到OpenAI API
+     * @param apiUrl API端点URL
+     * @param requestBody 请求体
+     * @return API响应内容
+     */
     private String sendRequest(String apiUrl, Map<String, Object> requestBody) {
         return webClient.post()
             .uri(apiUrl)
@@ -87,6 +109,11 @@ public class OpenAIServiceImpl implements AIService {
             .block();
     }
 
+    /**
+     * 处理API错误响应
+     * @param clientResponse HTTP响应对象
+     * @return 包装成Mono的异常对象
+     */
     private Mono<? extends Throwable> handleErrorResponse(ClientResponse clientResponse) {
         return clientResponse.bodyToMono(String.class)
             .flatMap(errorBody -> {
@@ -98,6 +125,12 @@ public class OpenAIServiceImpl implements AIService {
             });
     }
 
+    /**
+     * 解析API响应内容
+     * @param response API原始响应字符串
+     * @return 提取的摘要内容
+     * @throws Exception 当响应格式不正确时抛出
+     */
     private String parseResponse(String response) throws Exception {
         JsonNode responseNode = objectMapper.readTree(response);
         if (!responseNode.has("choices") || !responseNode.get("choices").isArray() 
@@ -110,6 +143,11 @@ public class OpenAIServiceImpl implements AIService {
             .path("message").path("content").asText();
     }
 
+    /**
+     * 统一异常处理
+     * @param e 捕获的异常
+     * @throws BusinessException 包装后的业务异常
+     */
     private void handleException(Exception e) {
         log.error("调用 OpenAI API 失败: {}", e.getMessage());
         if (e instanceof BusinessException) {

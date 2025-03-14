@@ -3,8 +3,8 @@ package com.example.mynews.response;
 import lombok.Getter;
 
 /**
- * 错误码枚举类
- * 规范所有异常的错误码和错误信息
+ * 系统状态码枚举
+ * 定义了所有可能的业务状态码和对应的描述信息
  */
 @Getter
 public enum StatusCode {
@@ -48,9 +48,17 @@ public enum StatusCode {
    CRAWLER_NETWORK_ERROR(5002, "网络请求失败"),
    CRAWLER_PARSE_ERROR(5003, "内容解析失败");
 
+   /** 状态码 */
    private final int code;
+   
+   /** 状态描述 */
    private final String message;
 
+   /**
+    * 构造函数
+    * @param code 状态码
+    * @param message 状态描述
+    */
    StatusCode(int code, String message) {
        this.code = code;
        this.message = message;
