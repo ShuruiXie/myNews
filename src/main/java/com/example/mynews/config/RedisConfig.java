@@ -1,15 +1,21 @@
 package com.example.mynews.config;
 
+import com.example.mynews.exception.RedisException;
+import com.example.mynews.response.StatusCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Redis配置类
- * 用于配置Redis连接和序列化方式
+ * 提供Redis连接配置和基础操作方法
  */
+@Slf4j
 @Configuration
 public class RedisConfig {
     
@@ -39,5 +45,41 @@ public class RedisConfig {
         // 初始化RedisTemplate
         template.afterPropertiesSet();
         return template;
+    }
+    
+    /**
+     * 设置缓存
+     */
+    public void set(StringRedisTemplate redisTemplate, String key, String value, long timeout, TimeUnit unit) {
+        try {
+            redisTemplate.opsForValue().set(key, value, timeout, unit);
+        } catch (Exception e) {
+            log.error("Redis设置缓存失败: key={}", key, e);
+            throw new RedisException(StatusCode.REDIS_OPERATION_ERROR);
+        }
+    }
+    
+    /**
+     * 获取缓存
+     */
+    public String get(StringRedisTemplate redisTemplate, String key) {
+        try {
+            return redisTemplate.opsForValue().get(key);
+        } catch (Exception e) {
+            log.error("Redis获取缓存失败: key={}", key, e);
+            throw new RedisException(StatusCode.REDIS_OPERATION_ERROR);
+        }
+    }
+    
+    /**
+     * 删除缓存
+     */
+    public void delete(StringRedisTemplate redisTemplate, String key) {
+        try {
+            redisTemplate.delete(key);
+        } catch (Exception e) {
+            log.error("Redis删除缓存失败: key={}", key, e);
+            throw new RedisException(StatusCode.REDIS_OPERATION_ERROR);
+        }
     }
 } 
