@@ -18,11 +18,13 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 添加这行来查看SQL执行日志
   mapper-locations: classpath:mapper/*.xml
 logging:
   level:
     root: INFO
     com.example.mynews: DEBUG
+    org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG  # 添加这行来查看WebClient的详细日志
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
@@ -32,40 +34,11 @@ logging:
     rollingpolicy:
       max-history: 30
       max-file-size: 10MB
-crawler:
-  sites:
-    - name: "新华网"
-      baseUrl: "http://www.news.cn"
-      listUrl: "/politics/"  # 政治新闻频道
-      headers:
-        User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
-        Accept-Language: "zh-CN,zh;q=0.9"
-        Connection: "keep-alive"
-      listSelector: "div.gridContent ul.newList01 li"  # 新闻列表选择器
-      titleSelector: "div.h-title"  # 标题选择器
-      contentSelector: "div#detail"  # 正文选择器
-      dateSelector: "div.h-info span.h-time"  # 日期选择器
-      crawlInterval: 30  # 爬取间隔(分钟)
-    # 可以添加新华网的其他频道
-    - name: "新华网-国际"
-      baseUrl: "http://www.news.cn"
-      listUrl: "/world/"
-      headers:
-        User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
-        Accept-Language: "zh-CN,zh;q=0.9"
-        Connection: "keep-alive"
-      listSelector: "div.gridContent ul.newList01 li"
-      titleSelector: "div.h-title"
-      contentSelector: "div#detail"
-      dateSelector: "div.h-info span.h-time"
-      crawlInterval: 30
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info  # 暴露健康检查和信息端点
-  endpoint:
-    health:
-      show-details: always   # 显示详细的健康检查信息
+
+# OpenAI 兼容的 API 配置
+openai:
+  api-key: "${OPENAI_API_KEY:sk-1b74c104ecd84486a40362fb7ce0717f}"
+  api-url: "${OPENAI_API_BASE:https://api.deepseek.com}"
+  model: "deepseek-chat"
+  max-tokens: 500
+  temperature: 0.7

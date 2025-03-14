@@ -10,11 +10,10 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface NewsMapper {
     /**
-     * 插入新闻（不包含simpleTxt）
-     * @param newsDTO 新闻信息
-     * @return 影响的行数
+     * 插入新闻
      */
-    @Insert("INSERT INTO news (title, contentTxt, source, date) VALUES (#{title}, #{contentTxt}, #{source}, #{date})")
+    @Insert("INSERT INTO news (title, contentTxt, simpleTxt, source, date) " +
+            "VALUES (#{title}, #{contentTxt}, #{simpleTxt}, #{source}, #{date})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertNews(NewsDTO newsDTO);
 
